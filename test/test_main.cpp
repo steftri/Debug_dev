@@ -4,36 +4,26 @@
 #include <Arduino.h>   // needed for service delay
 #endif
 
-#include "arduinolibraryskeleton.h"
+#include "log.h"
 
 
-
-ArduinoLibrarySkeleton myArduinoLibrarySkeleton;
 
 
 
 void setUp(void) 
 {
   // set stuff up here
-  (void)myArduinoLibrarySkeleton.begin();
 }
 
 void tearDown(void) 
 {
   // clean stuff up here
-  myArduinoLibrarySkeleton.end();
 }
 
 
 
 void test_case_1(void) 
 {
-  // test step 1: check default value
-  TEST_ASSERT_EQUAL_UINT32(0, myArduinoLibrarySkeleton.getValue());
-
-  // test step 2: check set value
-  myArduinoLibrarySkeleton.setValue(4711);
-  TEST_ASSERT_EQUAL_UINT32(4711, myArduinoLibrarySkeleton.getValue());
 }
 
 
