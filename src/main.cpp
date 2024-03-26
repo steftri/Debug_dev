@@ -4,18 +4,27 @@
 #include <iostream>
 #endif
 
-
 #include "debug.h"
 
+class DebugAction : public DebugActionInterface
+{
+public: 
+  void Callback(const char* pc_Message);
+};
 
-void debug_callback(const char* pc_Message)
+void DebugAction::Callback(const char* pc_Message)
 {
 #ifdef ARDUINO  
   Serial.println(pc_Message);
 #else
-  std::cout << pc_Message << std::endl;
+  printf("%s\n", pc_Message);
+//  std::cout << pc_Message << std::endl;
 #endif
 }
+
+
+DebugAction g_debugAction;
+Debug g_debug;
 
 
 
@@ -30,20 +39,20 @@ void setup()
   std::cout << __DATE__ " " __TIME__ << std::endl;
 #endif
 
-  debug_init(&debug_callback, Info);
+  g_debug.init(&g_debugAction, Debug::Info);
 }
 
 
 
 void loop()
 {
-  static volatile uint8_t value = 0;
-  value++;   // do something very simple
-
-  debug(Info, "loop successfully entered - exiting...");
+  g_debug.msg(Debug::Info, "loop successfully entered - exiting...");
 #ifdef ARDUINO  
   Serial.flush();
 #endif
+
+  // This is only for demonstration, we don't want this 
+  // program to run forever, so we exit the program at this point. 
   exit(0);
 }
 

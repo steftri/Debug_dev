@@ -13,11 +13,25 @@ char gac_CallbackMessage[256]="";
 
 
 
-void debug_callback(const char* pc_Message)
+class DebugAction : public DebugActionInterface
+{
+public: 
+  void Callback(const char* pc_Message);
+};
+
+void DebugAction::Callback(const char* pc_Message)
 {
   gu32_CallbackCounter++;
   strcpy(gac_CallbackMessage, pc_Message);
 }
+
+
+DebugAction g_debugAction;
+Debug g_debug;
+
+
+
+
 
 
 
@@ -37,25 +51,25 @@ void tearDown(void)
 
 void testcase_log_unconfigured(void) 
 {
-  debug(Error, "This is an error");
+  g_debug.msg(Debug::Error, "This is an error");
   TEST_ASSERT_EQUAL_UINT32_MESSAGE(0, gu32_CallbackCounter, "callback called even though not configured");
 }
 
 void testcase_log_configured(void) 
 {
-  debug_init(&debug_callback);
+  g_debug.init(&g_debugAction);
 
-  debug(Error, "This is an error");
+  g_debug.msg(Debug::Error, "This is an error");
   TEST_ASSERT_EQUAL_UINT32_MESSAGE(1, gu32_CallbackCounter, "callback not called for error");
   TEST_ASSERT_EQUAL_STRING("ERROR: This is an error", gac_CallbackMessage);
 
-  debug(Warning, "This is a warning");
+  g_debug.msg(Debug::Warning, "This is a warning");
   TEST_ASSERT_EQUAL_UINT32_MESSAGE(1, gu32_CallbackCounter, "callback called even though warnings shouldn't be logged be default");
-  debug(FatalError, "This is a fatal error");
+  g_debug.msg(Debug::FatalError, "This is a fatal error");
   TEST_ASSERT_EQUAL_UINT32_MESSAGE(2, gu32_CallbackCounter, "callback not called for fatal error");
 
-  debug_finish();
-  debug(Error, "This is an error");
+  g_debug.finish();
+  g_debug.msg(Debug::Error, "This is an error");
   TEST_ASSERT_EQUAL_UINT32_MESSAGE(2, gu32_CallbackCounter, "callback called after finish");
 }
 
